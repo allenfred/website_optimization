@@ -454,14 +454,26 @@ var resizePizzas = function(size) {
   //   }
   // }
 
-  // 老师，给点提示 没法达到5ms
+  // fixed 去除无用的determineDx函数 
   function changePizzaSizes(size) {
-    var windowWidth = document.querySelector("#randomPizzas").offsetWidth;
-    var oldWidth =  document.querySelectorAll(".randomPizzaContainer")[0].offsetWidth;
-    for (var i = 0; i < document.querySelectorAll(".randomPizzaContainer").length; i++) {
-      var dx = determineDx(oldWidth, windowWidth, size);
-      var newwidth = (oldWidth + dx) + 'px';
-      document.querySelectorAll(".randomPizzaContainer")[i].style.width = newwidth;
+    var newWidth;
+    switch(size) {
+      case "1":
+        newWidth = 25;
+        break;
+      case "2":
+        newWidth = 33.3;
+        break;
+      case "3":
+        newWidth = 50;
+        break;
+      default:
+        console.log("bug in sizeSwitcher");
+    }
+    // 去除querySelectorAll这种耗性能的写法
+    var randomPizzas = document.getElementsByClassName("randomPizzaContainer");
+    for (var i = 0; i < randomPizzas.length; i++) {
+      randomPizzas[i].style.width = newWidth + "%";
     }
   }
 
@@ -535,9 +547,13 @@ window.addEventListener('scroll', updatePositions);
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
-  // 降低页面上的pizza数量
-  for (var i = 0; i < 30; i++) {
-    var elem = document.createElement('img');
+  var elem;
+  // 规律计算实际需要显示的数量
+  var winHeight = window.innerHeight || 
+  document.documentElement.clientHeight || document.body.clientHeight;
+  var pizzaAmount =  (winHeight / s) * cols;
+  for (var i = 0; i < pizzaAmount; i++) {
+    elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
     elem.style.height = "100px";
